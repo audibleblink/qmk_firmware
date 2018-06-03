@@ -1,7 +1,24 @@
-FROM qmkfm/base_container
+FROM debian:9
 
-VOLUME /qmk_firmware
-WORKDIR /qmk_firmware
-COPY . .
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    avr-libc \
+    avrdude \
+    binutils-arm-none-eabi \
+    binutils-avr \
+    build-essential \
+    dfu-programmer \
+    dfu-util \
+    gcc \
+    gcc-arm-none-eabi \
+    gcc-avr \
+    git \
+    libnewlib-arm-none-eabi \
+    software-properties-common \
+    unzip \
+    wget \
+    zip \
+    && rm -rf /var/lib/apt/lists/*
 
-CMD make all:default
+VOLUME /qmk
+WORKDIR /qmk
+CMD make clean ; make ${keyboard}:${keymap}
