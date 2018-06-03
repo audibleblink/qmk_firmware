@@ -1,0 +1,51 @@
+---
+name: Build Keyboard Firmware
+on:
+  push:
+    branches:
+      - alex
+    paths:
+      - keyboards/**
+      - .github/workflows/alex.yml
+  workflow_dispatch: null
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: qmkfm/qmk_cli
+    strategy:
+      matrix:
+        keymap:
+          - alex
+          - default
+        keyboard:
+          - massdrop/alt
+          - 1upkeyboards/1up60rgb
+          - input_club/whitefox
+          - keyboardio/atreus
+
+        include:
+          - keyboard: massdrop/alt
+            prefix: massdrop_alt
+          - keyboard: 1upkeyboards/1up60rgb
+            prefix: 1upkeyboards_1up60rgb
+          - keyboard: input_club/whitefox
+            prefix: input_club_whitefox
+          - keyboard: keyboardio/atreus
+            prefix: keyboardio_atreus
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Build firmware
+        run: |
+          qmk compile -kb ${{ matrix.keyboard }} -km ${{ matrix.keymap }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.prefix }}_${{ matrix.keymap }}.bin
+          path: ${{ matrix.prefix }}_${{ matrix.keymap }}*
+
