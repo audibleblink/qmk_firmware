@@ -12,12 +12,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: qmkfm/qmk_cli
+    container: ghcr.io/qmk/qmk_cli
     strategy:
       matrix:
         keymap:
           - alex
-          - default
+          # - default
         keyboard:
           - massdrop/alt
           - 1upkeyboards/1up60rgb
@@ -48,4 +48,3 @@ jobs:
         with:
           name: ${{ matrix.prefix }}_${{ matrix.keymap }}.bin
           path: ${{ matrix.prefix }}_${{ matrix.keymap }}*
-
